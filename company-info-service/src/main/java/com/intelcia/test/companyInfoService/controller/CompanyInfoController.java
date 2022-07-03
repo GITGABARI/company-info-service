@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +25,7 @@ import com.intelcia.test.companyInfoService.util.WriteDataToCSV;
 
 @RestController
 @RequestMapping("/company")
+@Validated
 public class CompanyInfoController {
 	
 	@Autowired
@@ -35,7 +40,7 @@ public class CompanyInfoController {
 	 * ***/
 	
 	@GetMapping(value = "/{siret}")
-	public void getCompanyInfo(@PathVariable("siret") String siret, HttpServletResponse response) throws IOException {
+	public void getCompanyInfo(@PathVariable("siret") @NotBlank @Size(min=14, max=14) String siret, HttpServletResponse response) throws IOException {
 
 		ResponseEntity<JsonNode> infoResponse =
 		        restTemplate.exchange( apiUrl+ siret,
