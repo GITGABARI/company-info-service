@@ -29,6 +29,11 @@ public class CompanyInfoController {
 	@Value("${api.url}")
 	private String apiUrl;
 	
+	/***
+	 * getCompanyInfo : endpoint that take siret number and generate 
+	 * a csv file as response whith the required infos
+	 * ***/
+	
 	@GetMapping(value = "/{siret}")
 	public void getCompanyInfo(@PathVariable("siret") String siret, HttpServletResponse response) throws IOException {
 
@@ -42,20 +47,23 @@ public class CompanyInfoController {
 	    WriteDataToCSV.writeDataToCsvUsingStringArray(response.getWriter(), mapData(ir));
 	}
 	
+	
+	
+	/***
+	 * mapData : function de map data from JsonNode to 
+	 * POJO whith required fields
+	 * ***/
 	private CompanyInfo mapData(JsonNode jn) {
 		
 		JsonNode innerNode = jn.get("etablissement"); 
-	    // get an element in that node
 	    JsonNode idNode = innerNode.get("id");
 	    JsonNode nicNode = innerNode.get("nic");
 	    JsonNode addressNode = innerNode.get("geo_adresse");
 	    JsonNode creationDateNode = innerNode.get("date_creation");
-	    
 	    JsonNode uniteLegaleNode = innerNode.get("unite_legale");
 	    JsonNode fullNameNode = uniteLegaleNode.get("nom");
 	    JsonNode tvaNode = uniteLegaleNode.get("numero_tva_intra");
-	    //the customerSessionId has a String value
-	    Long id = idNode.asLong();
+	  	
 	    return new CompanyInfo(idNode.asLong(), nicNode.asText(), addressNode.asText(), LocalDate.parse(creationDateNode.asText()),fullNameNode.asText(),tvaNode.asText());
 	}
 	
